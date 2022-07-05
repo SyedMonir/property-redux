@@ -1,11 +1,17 @@
 import React from 'react';
-import Dashboard from './Dashboard/Dashboard';
+import Dashboard from './Pages/Dashboard/Dashboard';
+import { Routes, Route } from 'react-router-dom';
+import AddProperty from './Pages/Dashboard/AddProperty';
 
 function App() {
   return (
     <>
-      <h1>Hello World</h1>
-      <Dashboard />
+      <Routes>
+        <Route path="/" element={<Dashboard />}>
+          <Route path="add-property" element={<AddProperty />} />
+        </Route>
+        <Route path="*" element={<Dashboard />} />
+      </Routes>
     </>
   );
 }
