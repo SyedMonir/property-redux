@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { postAllItems } from '../../feature/propertyAction';
 import {
   Grid,
   makeStyles,
@@ -38,50 +40,76 @@ const initialValues = {
 };
 
 const options = [
-  { label: 'Computer Programmer', value: 'Computer_programmer' },
-  { label: 'Web Developer', value: 'web_developer' },
-  { label: 'User Experience Designer', value: 'user_experience_designer' },
-  { label: 'Systems Analyst', value: 'systems_analyst' },
-  { label: 'Quality Assurance Tester', value: 'quality_assurance_tester' },
+  { label: 'Karim', value: 'Karim' },
+  { label: 'Fahad', value: 'Fahad' },
 ];
-
-//password validation
-const lowercaseRegEx = /(?=.*[a-z])/;
-const uppercaseRegEx = /(?=.*[A-Z])/;
-const numericRegEx = /(?=.*[0-9])/;
-const lengthRegEx = /(?=.{6,})/;
 
 //validation schema
 let validationSchema = Yup.object().shape({
-  firstName: Yup.string().required('Required'),
-  lastName: Yup.string().required('Required'),
-  email: Yup.string().email('Invalid email').required('Required'),
-  password: Yup.string()
-    .matches(
-      lowercaseRegEx,
-      'Must contain one lowercase alphabetical character!'
-    )
-    .matches(
-      uppercaseRegEx,
-      'Must contain one uppercase alphabetical character!'
-    )
-    .matches(numericRegEx, 'Must contain one numeric character!')
-    .matches(lengthRegEx, 'Must contain 6 characters!')
-    .required('Required!'),
+  Reference: Yup.string().required('Required'),
 });
 
 const AddProperty = () => {
+  const { isLoading, items, error } = useSelector((state) => state);
+  console.log(items);
+
+  const primaryType = [
+    {
+      value: 'commercial',
+      label: 'Commercial',
+    },
+    {
+      value: 'residential',
+      label: 'Residential',
+    },
+  ];
+
+  const strata = [
+    {
+      value: 'moment Pty Ltd (SUP00001)',
+      label: 'moment Pty Ltd (SUP00001)',
+    },
+    {
+      value: 'Bencrop OCM Ltd (SUP00004)',
+      label: 'Bencrop OCM Ltd (SUP00004)',
+    },
+  ];
+
+  const type = [
+    {
+      value: 'house',
+      label: 'house',
+    },
+    {
+      value: 'duplex',
+      label: 'duplex',
+    },
+    {
+      value: 'apartment',
+      label: 'apartment',
+    },
+    {
+      value: 'commercial',
+      label: 'commercial',
+    },
+  ];
+
+  const dispatch = useDispatch();
+
   const classes = useStyle();
 
   const onSubmit = (values) => {
     console.log(values);
+    dispatch(postAllItems());
   };
   return (
     <>
+      {isLoading && <h3>Loading ...</h3>}
+      {error && <h3>{error.message}</h3>}
       <Grid container justify="center" spacing={1}>
         <Grid item md={6}>
           <Card className={classes.padding}>
-            <CardHeader title="REGISTER FORM"></CardHeader>
+            <CardHeader title="Add Property"></CardHeader>
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
@@ -91,44 +119,78 @@ const AddProperty = () => {
                 return (
                   <Form>
                     <CardContent>
+                      <Grid item container spacing={1} justify="">
+                        <Grid item xs={12}>
+                          <Field
+                            label="Reference"
+                            variant="outlined"
+                            fullWidth
+                            name="Reference"
+                            value={values.Reference}
+                            component={TextField}
+                          />
+                        </Grid>
+                        <FormControl fullWidth variant="outlined">
+                          <InputLabel id="demo-simple-select-outlined-label">
+                            Manager
+                          </InputLabel>
+                          <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            label="manager"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={values.manager}
+                            name="manager"
+                          >
+                            {options.map((item) => (
+                              <MenuItem key={item.value} value={item.value}>
+                                {item.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <h3>Address</h3>
                       <Grid item container spacing={1} justify="center">
-                        <Grid item xs={12} sm={6} md={6}>
+                        <Grid item xs={12}>
                           <Field
-                            label="First Name"
+                            label="Details"
                             variant="outlined"
                             fullWidth
-                            name="firstName"
-                            value={values.firstName}
+                            name="details"
+                            value={values.details}
                             component={TextField}
                           />
                         </Grid>
-                        <Grid item xs={12} sm={6} md={6}>
+                        <Grid item xs={12}>
                           <Field
-                            label="Last Name"
+                            label="Location"
                             variant="outlined"
                             fullWidth
-                            name="lastName"
-                            value={values.lastName}
+                            name="location"
+                            value={values.location}
                             component={TextField}
                           />
                         </Grid>
-
-                        <Grid item xs={12} sm={6} md={12}>
+                      </Grid>
+                      <h3>Details</h3>
+                      <Grid item container spacing={1} justify="center">
+                        <Grid item xs={12}>
                           <FormControl fullWidth variant="outlined">
-                            <InputLabel id="demo-simple-select-outlined-label">
-                              Occupation
+                            <InputLabel id="demo-simple-select-outlined-label-2">
+                              Primary Type
                             </InputLabel>
                             <Select
-                              labelId="demo-simple-select-outlined-label"
-                              id="demo-simple-select-outlined"
-                              label="Occupation"
+                              labelId="demo-simple-select-outlined-label-2"
+                              id="demo-simple-select-outlined-2"
+                              label="Primary-Type"
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              value={values.occupation}
-                              name="occupation"
+                              value={values.primaryType}
+                              name="Primary-Type"
                             >
-                              <MenuItem>None</MenuItem>
-                              {options.map((item) => (
+                              {primaryType.map((item) => (
                                 <MenuItem key={item.value} value={item.value}>
                                   {item.label}
                                 </MenuItem>
@@ -136,44 +198,99 @@ const AddProperty = () => {
                             </Select>
                           </FormControl>
                         </Grid>
-                        <Grid item xs={12} sm={6} md={6}>
+
+                        <Grid item xs={12}>
+                          <FormControl fullWidth variant="outlined">
+                            <InputLabel id="demo-simple-select-outlined-label-3">
+                              Type
+                            </InputLabel>
+                            <Select
+                              labelId="demo-simple-select-outlined-label-3"
+                              id="demo-simple-select-outlined-3"
+                              label="Type"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={values.type}
+                              name="Type"
+                            >
+                              {type.map((item) => (
+                                <MenuItem key={item.value} value={item.value}>
+                                  {item.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <FormControl fullWidth variant="outlined">
+                            <InputLabel id="demo-simple-select-outlined-label-2">
+                              Strata Manager
+                            </InputLabel>
+                            <Select
+                              labelId="demo-simple-select-outlined-label-4"
+                              id="demo-simple-select-outlined-4"
+                              label="strata manager"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={values.starta}
+                              name="strata"
+                            >
+                              {strata.map((item) => (
+                                <MenuItem key={item.value} value={item.value}>
+                                  {item.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                      </Grid>
+                      <h3>Inspections</h3>
+                      <Grid item container spacing={1} justify="center">
+                        <Grid item xs={12}>
                           <Field
-                            label="City"
+                            label="Routine Inspection Frequency"
                             variant="outlined"
                             fullWidth
-                            name="city"
-                            value={values.city}
+                            name="routine"
+                            type="number"
+                            value={values.routine}
                             component={TextField}
                           />
                         </Grid>
-                        <Grid item xs={12} sm={6} md={6}>
+                        <Grid item xs={12}>
                           <Field
-                            label="Country"
+                            label="First Routine (Optional)"
                             variant="outlined"
                             fullWidth
-                            name="country"
-                            value={values.country}
+                            name="firstRoutine"
+                            type="number"
+                            value={values.firstRoutine}
                             component={TextField}
                           />
                         </Grid>
-                        <Grid item xs={12} sm={6} md={6}>
+                        <Grid item xs={12}>
+                          <label>Routine Inspection Due</label>
                           <Field
-                            label="Email"
                             variant="outlined"
                             fullWidth
-                            name="email"
-                            value={values.email}
+                            name="routineInspectionDue"
+                            type="date"
+                            value={values.routineInspectionDue}
                             component={TextField}
                           />
                         </Grid>
-                        <Grid item xs={12} sm={6} md={6}>
+                      </Grid>
+                      <h3>Notes</h3>
+                      <Grid item container spacing={1} justify="center">
+                        <Grid item xs={12}>
                           <Field
-                            label="Password"
+                            label="Notes"
                             variant="outlined"
                             fullWidth
-                            name="password"
-                            value={values.password}
-                            type="password"
+                            type="textfield"
+                            name="notes"
+                            value={values.notes}
                             component={TextField}
                           />
                         </Grid>
@@ -187,7 +304,7 @@ const AddProperty = () => {
                         type="Submit"
                         className={classes.button}
                       >
-                        REGISTER
+                        SAVE
                       </Button>
                     </CardActions>
                   </Form>
